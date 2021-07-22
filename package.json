@@ -1,7 +1,7 @@
 {
   "name": "cursos-api",
   "version": "1.0.0",
-  "main": "src/index.js",
+  "main": "src/index turmas.js", 
   "license": "MIT",
   "scripts": {
     "dev": "nodemon"

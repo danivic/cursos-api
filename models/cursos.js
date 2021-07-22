@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   };
   Cursos.init({
     name: DataTypes.STRING,
+    time: DataTypes.STRING,
     description: DataTypes.STRING,
     active: DataTypes.BOOLEAN
   }, {
