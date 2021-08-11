@@ -1,6 +1,6 @@
 const { v4 } = require('uuid');
 const express = require('express');
-const {cursos} = require('./cursos');
+const {cursos} = require('../cursos');
 const app = express();
 
 app.use(express.json());

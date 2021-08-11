@@ -1,6 +1,6 @@
 const { v4 } = require('uuid');
 const express = require('express');
-const {turmas} = require('./turmas');
+const {turmas} = require('../turmas');
 const app = express();
 
 app.use(express.json());
