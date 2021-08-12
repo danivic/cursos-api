@@ -1,50 +1,100 @@
-const { v4 } = require('uuid');
 const express = require('express');
-const {professores} = require('../professores');
+const cors = require('cors');
 const app = express.Router();
-
+const mongoose = require('mongoose');
 app.use(express.json());
 
-app.get('/professores/search', (request, response) => {
-    const {name} = request.query;
-    const results = name
-    ? professores.filter(p => p.name.includes(name))
-    :professores;
-    return response.status(200).json(results);
+
+require('../models/Professores');
+const Professores = mongoose.model('professores');
+
+app.use((request, response, next) => {
+    //console.log("Acessou o Middleware!");
+    response.header("Access-Control-Allow-Origin", "http://localhost:3000");
+    response.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+    app.use(cors());
+    next();
+});
+
+mongoose.connect('mongodb://localhost/cursos', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+}).then(() => {
+    console.log("Conexão com MongoDB realizada com sucesso!");
+}).catch((erro) => {
+    console.log("Erro: Conexão com MongoDB não foi realizada com sucesso!");
+});
+
+app.get('/professores/:id', (request, response) => {
+    Professores.findOne({ _id: request.params.id }).then((professores) => {
+        return response.json(professores);
+    }).catch((erro) => {
+        return response.status(400).json({
+            error: true,
+            message: "Nenhum professor encontrado!"
+        })
+    })
 });
 
 app.get('/professores', (request, response) => {
-    return response.status(200).json(professores);
+   /*  return response.status(400).json({
+        error: true,
+        message: "Nenhum dado encontrado!"
+    })
+}); */
+
+    Professores.find({}).then((professores) => {
+        return response.json(professores);
+    }).catch((erro) => {
+        return response.status(400).json({
+            error: true,
+            message: "Nenhum professor encontrado!"
+        })
+    })
 });
 
 app.post('/professores', (request, response) => {
-    const {type, name} = request.body;
-    const professor = { 
-        id:v4(), 
-        type: type, 
-        name: name 
-    }
-    professores.push(professor);
-    return response.status(201).json(professor);
+    //console.log(response.body);
+    //return response.json(request.body);
+    const professores = Professores.create(request.body, (erro) => {
+        if (erro) return response.status(400).json({
+            error: true,
+            message: "Error: o professor não foi cadastrado!"
+        })
+
+        return response.status(400).json({
+            error: false,
+            message: "Professor cadastrado com sucesso!"
+        })
+    })
 });
 
 app.put('/professores/:id', (request, response) => {
-    const {id} = request.params;
-    const {type, name} = request.body;
-    const index = professores.findIndex(p => p.id === id);
-    if(index < 0) return response.status(404).json({error: 'Não encontrado'});
-    const professor = { id, type, name};
-    professores[index] = professor;
-        return response.status(200).json(professor);
+    const professores = Professores.updateOne({ _id: request.params.id }, request.body, (erro) => {
+        if (erro) return response.status(400).json({
+            error: true,
+            message: "Error: O professor não foi alterado!"
+        });
+
+        return response.json({
+            error: false,
+            message: "Professor alterado com sucesso!"
+        });
+    });
 });
 
 app.delete('/professores/:id', (request, response) => {
-    const {id} = request.params;
-    const index = professores.findIndex(p => p.id === id);
-    if(index < 0) 
-    return response.status(404).json({error: 'Não encontrado'});
-    professores.splice(index, 1);
-    return response.status(200).json({Message: 'Professor removido'});
+    const professores = Professores.deleteOne({_id: request.params.id}, (erro) => {
+        if(erro) return response.status(400).json({
+            error: true,
+            message: "Error: O professor não foi removido!"
+        });
+
+        return response.json({
+            error: false,
+            message: "Professor removido com sucesso!"
+        });
+    });
 });
 
 
