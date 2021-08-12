@@ -5,7 +5,6 @@ const app = express.Router();
 
 app.use(express.json());
 
-
 app.get('/alunos/search', (request, response) => {
     const {name} = request.query;
     const results = name
