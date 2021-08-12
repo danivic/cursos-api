@@ -1,9 +1,10 @@
 const { v4 } = require('uuid');
 const express = require('express');
 const {alunos} = require('../alunos');
-const app = express();
+const app = express.Router();
 
 app.use(express.json());
+
 
 app.get('/alunos/search', (request, response) => {
     const {name} = request.query;
@@ -48,4 +49,4 @@ app.delete('/alunos/:id', (request, response) => {
 });
 
 
-app.listen(3333);
+module.exports = app
