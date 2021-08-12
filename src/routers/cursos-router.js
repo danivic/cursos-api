@@ -1,7 +1,7 @@
 const { v4 } = require('uuid');
 const express = require('express');
 const {cursos} = require('../cursos');
-const app = express();
+const app = express.Router();
 
 app.use(express.json());
 
@@ -48,4 +48,4 @@ app.delete('/cursos/:id', (request, response) => {
 });
 
 
-app.listen(3333);
+module.exports = app
